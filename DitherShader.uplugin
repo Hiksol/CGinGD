@@ -1,0 +1,16 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Dither Shader",
+	"Description": "Applies a dithering effect as post-process",
+	"Category": "Rendering",
+	"CreatedBy": "You",
+	"Modules": [
+		{
+			"Name": "DitherShader",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
