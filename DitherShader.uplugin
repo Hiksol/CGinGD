@@ -3,14 +3,14 @@
 	"Version": 1,
 	"VersionName": "1.0",
 	"FriendlyName": "Dither Shader",
-	"Description": "Applies a dithering effect as post-process",
+	"Description": "Applies a dithering effect",
 	"Category": "Rendering",
-	"CreatedBy": "You",
+	"CreatedBy": "Nikita Solomennikov",
 	"Modules": [
 		{
 			"Name": "DitherShader",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "PostConfigInit"
 		}
 	]
 }

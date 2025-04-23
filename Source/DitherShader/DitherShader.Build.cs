@@ -1,3 +1,5 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+
 using UnrealBuildTool;
 
 public class DitherShader : ModuleRules
@@ -6,26 +8,48 @@ public class DitherShader : ModuleRules
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[]
-        {
-            "Core",
-            "CoreUObject",
-            "Engine",
-            "RenderCore",
-            "RHI"
-        });
+        PublicIncludePaths.AddRange(
+            new string[] {
+				// ... add public include paths required here ...
+			}
+            );
 
-        PrivateDependencyModuleNames.AddRange(new string[]
-        {
-            "Renderer",
-            "RenderCore",
-            "RHI",
-            "Projects",
-            "Slate",
-            "SlateCore"
-        });
 
-        string PluginShaderDir = System.IO.Path.Combine(ModuleDirectory, "../../Shaders/Private");
-        AddEngineThirdPartyPrivateStaticDependencies(Target, "DX11");
+        PrivateIncludePaths.AddRange(
+            new string[] {
+				// ... add other private include paths required here ...
+			}
+            );
+
+
+        PublicDependencyModuleNames.AddRange(
+            new string[]
+            {
+                "Core",
+				// ... add other public dependencies that you statically link with here ...
+			}
+            );
+
+
+        PrivateDependencyModuleNames.AddRange(
+            new string[]
+            {
+                "Core",
+                "CoreUObject",
+                "Engine",
+                "RHI",
+                "Renderer",
+                "Projects",
+                "RenderCore",
+            }
+            );
+
+
+        DynamicallyLoadedModuleNames.AddRange(
+            new string[]
+            {
+				// ... add any modules that your module loads dynamically here ...
+			}
+            );
     }
 }

@@ -1,50 +1,27 @@
-#include "DitherShader.h"
+#include "DitherShaderModule.h"
+#include "DitherShaderLog.h"
+
 #include "Interfaces/IPluginManager.h"
 #include "Misc/Paths.h"
-#include "ShaderCore.h"
-#include "PostProcess/DitherPostProcessPass.h"
-#include "RendererInterface.h"
 #include "SceneViewExtension.h"
 
 #define LOCTEXT_NAMESPACE "FDitherShaderModule"
 
 void FDitherShaderModule::StartupModule()
 {
+    UE_LOG(DitherShader, Log, TEXT("DitherShaderModule startup"));
+
     FString PluginShaderDir = FPaths::Combine(IPluginManager::Get().FindPlugin(TEXT("DitherShader"))->GetBaseDir(), TEXT("Shaders"));
     AddShaderSourceDirectoryMapping(TEXT("/DitherShader"), PluginShaderDir);
 
-    PostOpaqueRenderDelegateHandle = GetRendererModule().RegisterPostOpaqueRenderDelegate(
-        FPostOpaqueRenderDelegate::CreateRaw(this, &FDitherShaderModule::OnPostOpaqueRender));
+    FCoreDelegates::OnPostEngineInit.AddLambda([this]() {
+        ViewExtension = FSceneViewExtensions::NewExtension<FDitherSceneViewExtension>();
+    });
 }
 
 void FDitherShaderModule::ShutdownModule()
 {
-    if (PostOpaqueRenderDelegateHandle.IsValid())
-    {
-        GetRendererModule().RemovePostOpaqueRenderDelegate(PostOpaqueRenderDelegateHandle);
-        PostOpaqueRenderDelegateHandle.Reset();
-    }
-}
-
-void FDitherShaderModule::OnPostOpaqueRender(FRDGBuilder& GraphBuilder, const FSceneView& View, const FPostOpaqueRenderParameters& Parameters)
-{
-    if (View.bIsSceneCapture || View.bIsReflectionCapture || View.bIsPlanarReflection)
-    {
-        return;
-    }
-
-    if (Parameters.SceneTextures)
-    {
-        FRDGTextureRef SceneColorTexture = Parameters.SceneTextures->SceneColorTexture;
-        FRDGTextureRef OutputTexture = nullptr;
-
-        AddDitherPostProcessPass(GraphBuilder, View, SceneColorTexture, OutputTexture);
-
-        if (OutputTexture)
-        {
-            Parameters.SceneTextures->SceneColorTexture = OutputTexture;
-        }
-    }
+    UE_LOG(DitherShader, Log, TEXT("DitherShaderModule shutdown"));
 }
 
 #undef LOCTEXT_NAMESPACE

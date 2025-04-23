@@ -1,0 +1,74 @@
+#include "/Engine/Private/Common.ush"
+#include "/Engine/Private/SceneTexturesCommon.ush"
+
+float3 ApplyQuantization(float3 color, float quantization)
+{
+    if (quantization > 0.0)
+    {
+        color = round(color * quantization) / quantization;
+    }
+    return color;
+}
+
+int GetBayer8x8(int2 i)
+{
+    const int bayer[64] =
+    {
+        0, 48, 12, 60, 3, 51, 15, 63,
+        32, 16, 44, 28, 35, 19, 47, 31,
+         8, 56, 4, 52, 11, 59, 7, 55,
+        40, 24, 36, 20, 43, 27, 39, 23,
+         2, 50, 14, 62, 1, 49, 13, 61,
+        34, 18, 46, 30, 33, 17, 45, 29,
+        10, 58, 6, 54, 9, 57, 5, 53,
+        42, 26, 38, 22, 41, 25, 37, 21
+    };
+    return bayer[i.x + i.y * 8];
+}
+
+float OrderedDither(float x, float2 uv, float2 resolution)
+{
+    int2 pixelCoord = int2(uv * resolution) % 8;
+    float limit = (float(GetBayer8x8(pixelCoord)) + 1) / 64.0;
+    return step(limit, x);
+}
+
+float GetLuma(float3 color)
+{
+    return dot(color, float3(0.2126, 0.7152, 0.0722));
+}
+
+float3 ApplyDithering(float3 color, float2 uv, float2 resolution, float ditherAmount, int ditherMode)
+{
+    float luma = GetLuma(color);
+    float pattern = OrderedDither(luma, uv, resolution);
+
+    if (ditherMode == 0)
+    {
+        color += color * pattern * ditherAmount;
+    }
+    else
+    {
+        color *= lerp(1.0, pattern, ditherAmount);
+    }
+
+    return color;
+}
+
+float DitherAmount;
+float Quantization;
+int DitherMode;
+
+float4 MainPS(
+    float4 SvPosition : SV_POSITION,
+    float2 UV : TEXCOORD0
+) : SV_Target0
+{
+    float2 Resolution = View.ViewSizeAndInvSize.xy;
+    float3 SceneColor = CalcSceneColor(UV);
+
+    SceneColor = ApplyQuantization(SceneColor, Quantization);
+    SceneColor = ApplyDithering(SceneColor, UV, Resolution, DitherAmount, DitherMode);
+
+    return float4(SceneColor, 1.0);
+}

@@ -1,7 +1,9 @@
 #pragma once
+
 #include "CoreMinimal.h"
-#include "ScreenPass.h"
-#include "SceneTexturesConfig.h"
+#include "Modules/ModuleManager.h"
+
+#include "DitherSceneViewExtension.h"
 
 class FDitherShaderModule : public IModuleInterface
 {
@@ -9,5 +11,5 @@ public:
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
 private:
-    TSharedPtr< class FFullScreenPassSceneViewExtension, ESPMode::ThreadSafe > ViewExtension;
+    TSharedPtr< class FDitherSceneViewExtension, ESPMode::ThreadSafe > ViewExtension;
 };
