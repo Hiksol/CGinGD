@@ -68,6 +68,7 @@ void FDitherSceneViewExtension::PrePostProcessPass_RenderThread(FRDGBuilder& Gra
 	FScreenPassRenderTarget ResultRenderTarget = FScreenPassRenderTarget(ResultTexture, SceneColor.ViewRect, ERenderTargetLoadAction::EClear);
 
 	FGlobalShaderMap* GlobalShaderMap = GetGlobalShaderMap(GMaxRHIFeatureLevel);
+	TShaderMapRef<FDitherShaderVS> ScreenPassVS(GlobalShaderMap);
 	TShaderMapRef<FDitherShaderPS> ScreenPassPS(GlobalShaderMap);
 
 	FDitherShaderPS::FParameters* Parameters = GraphBuilder.AllocParameters<FDitherShaderPS::FParameters>();
@@ -85,6 +86,7 @@ void FDitherSceneViewExtension::PrePostProcessPass_RenderThread(FRDGBuilder& Gra
 		View,
 		Viewport,
 		Viewport,
+		ScreenPassVS,
 		ScreenPassPS,
 		Parameters
 	);

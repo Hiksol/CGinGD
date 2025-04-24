@@ -1,6 +1,15 @@
 #include "/Engine/Private/Common.ush"
 #include "/Engine/Private/SceneTexturesCommon.ush"
 
+void MainVS(
+	in float4 InPosition : ATTRIBUTE0,
+	in float2 InTexCoord : ATTRIBUTE1,
+	out noperspective float4 OutUVAndScreenPos : TEXCOORD0,
+	out float4 OutPosition : SV_POSITION)
+{
+    DrawRectangle(InPosition, InTexCoord, OutPosition, OutUVAndScreenPos);
+}
+
 float3 ApplyQuantization(float3 color, float quantization)
 {
     if (quantization > 0.0)
@@ -60,15 +69,14 @@ float Quantization;
 int DitherMode;
 
 float4 MainPS(
-    float4 SvPosition : SV_POSITION,
-    float2 UV : TEXCOORD0
+    noperspective float4 UVAndScreenPos : TEXCOORD0
 ) : SV_Target0
 {
     float2 Resolution = View.ViewSizeAndInvSize.xy;
-    float3 SceneColor = CalcSceneColor(UV);
+    float3 SceneColor = CalcSceneColor(UVAndScreenPos.xy);
 
     SceneColor = ApplyQuantization(SceneColor, Quantization);
-    SceneColor = ApplyDithering(SceneColor, UV, Resolution, DitherAmount, DitherMode);
+    SceneColor = ApplyDithering(SceneColor, UVAndScreenPos.xy, Resolution, DitherAmount, DitherMode);
 
     return float4(SceneColor, 1.0);
 }

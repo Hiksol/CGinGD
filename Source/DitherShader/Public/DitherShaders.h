@@ -3,6 +3,16 @@
 #include "ScreenPass.h"
 #include "SceneTexturesConfig.h"
 
+
+class FDitherShaderVS : public FGlobalShader
+{
+public:
+    DECLARE_GLOBAL_SHADER(FDitherShaderVS);
+
+    FDitherShaderVS() = default;
+    FDitherShaderVS(const ShaderMetaType::CompiledShaderInitializerType& Initializer) : FGlobalShader(Initializer) {}
+};
+
 class FDitherShaderPS : public FGlobalShader
 {
     DECLARE_GLOBAL_SHADER(FDitherShaderPS);
